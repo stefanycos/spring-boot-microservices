@@ -35,5 +35,7 @@ public class Product {
 	private Integer amount;
 
 	private ProductImage image;
+	
+	private Boolean enabled = true;
 
 }

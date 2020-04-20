@@ -10,10 +10,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+
 import br.com.springboot.demo.product.service.client.FileClient;
 import br.com.springboot.demo.product.service.client.request.FileRequest;
 import br.com.springboot.demo.product.service.client.response.FileResponse;
 import br.com.springboot.demo.product.service.config.ApplicationProperties;
+import br.com.springboot.demo.product.service.domain.ImageStatus;
 import br.com.springboot.demo.product.service.domain.Product;
 import br.com.springboot.demo.product.service.repository.ProductRepository;
 import lombok.AllArgsConstructor;
@@ -30,11 +33,15 @@ public class ProductService {
 
 	private final ApplicationProperties properties;
 
+	private final FileServiceFallback serviceFallback;
+
+	@HystrixCommand(fallbackMethod = "saveFallback")
 	public void save(Product product) {
 		this.callFileServiceAndSetUrl(product);
 		repository.save(product);
 	}
 
+	@HystrixCommand(fallbackMethod = "deleteFallback")
 	public void delete(Product product) {
 		this.deleteProductImage(product);
 		repository.delete(product);
@@ -51,6 +58,17 @@ public class ProductService {
 		return PageableExecutionUtils.getPage(products, pageable, () -> mongoTemplate.count(query, Product.class));
 	}
 
+	public void saveFallback(Product product) {
+		serviceFallback.store(product);
+		repository.save(product);
+	}
+
+	public void deleteFallback(Product product) {
+		product.getImage().setStatus(ImageStatus.WAITING_DELETION);
+		repository.save(product);
+		product.setEnabled(false);
+	}
+
 	private void callFileServiceAndSetUrl(Product product) {
 		if (product.getImage() == null || product.getId() != null) {
 			return;
@@ -65,6 +83,7 @@ public class ProductService {
 
 		FileResponse response = fileClient.upload(request);
 		product.getImage().setUlr(response.getFileUrl());
+		product.getImage().setKey(response.getKey());
 	}
 
 	private void deleteProductImage(Product product) {
@@ -74,7 +93,7 @@ public class ProductService {
 
 		FileRequest request = FileRequest
 				.builder() //@formatter:off
-				.key(product.getImage().getFilename())
+				.key(product.getImage().getKey())
 				.bucket(properties.getBucket())
 				.build(); //@formatter:on
 

@@ -32,7 +32,7 @@ public class FileService {
 		String fileUrl = this.buildFileUrl(randomKey, fileRequest.getBucket());
 		log.info("File uploaded successfully. Download URL '{}'", fileUrl);
 
-		return new FileResponseDTO(fileUrl);
+		return new FileResponseDTO(fileUrl, randomKey);
 	}
 
 	public void delete(FileRequestDTO fileRequest) {

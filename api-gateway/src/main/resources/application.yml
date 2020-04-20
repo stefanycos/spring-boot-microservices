@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: 'api-gateway'
+    
+# Registering application in Eureka Server  
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+      
+management:
+ endpoints:
+  web:
+   exposure:
+    include:
+    - "routes" # lista as rotas encontradas no eureka

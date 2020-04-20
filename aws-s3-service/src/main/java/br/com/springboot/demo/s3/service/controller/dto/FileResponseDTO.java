@@ -10,5 +10,7 @@ import lombok.Setter;
 public class FileResponseDTO {
 	
 	private String fileUrl;
+	
+	private String key;
 
 }

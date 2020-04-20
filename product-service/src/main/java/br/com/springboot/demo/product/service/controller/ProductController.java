@@ -4,8 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +24,7 @@ import br.com.springboot.demo.product.service.controller.mapper.ProductMapper;
 import br.com.springboot.demo.product.service.domain.Product;
 import br.com.springboot.demo.product.service.service.ProductService;
 import br.com.springboot.demo.product.service.utils.ObjectUtils;
+import br.com.springboot.demo.product.service.validation.ProductValidator;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -32,6 +35,8 @@ public class ProductController {
 	private final ProductService service;
 
 	private final ProductMapper mapper;
+
+	private final ProductValidator validator;
 
 	@GetMapping("/{id}")
 	public Product read(@PathVariable String id) {
@@ -53,17 +58,24 @@ public class ProductController {
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@DeleteMapping
+	@DeleteMapping("/{id}")
 	public void delete(@PathVariable String id) {
 		Product product = this.read(id);
 		service.delete(product);
 	}
 
 	@PutMapping("/{id}")
-	public void update(@PathVariable String id, @RequestBody @Validated(OnUpdate.class) ProductRequestDTO payload) {
+	public Product update(@PathVariable String id, @RequestBody @Validated(OnUpdate.class) ProductRequestDTO payload) {
 		Product product = this.read(id);
 		ObjectUtils.copyNonNullProperties(payload, product);
 		service.save(product);
+
+		return product;
+	}
+
+	@InitBinder("productRequestDTO")
+	protected void initBinder(final WebDataBinder binder) {
+		binder.addValidators(validator);
 	}
 
 }

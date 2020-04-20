@@ -17,8 +17,6 @@ public class ProductRequestDTO {
 	@NotEmpty(groups = OnCreate.class)
 	private String name;
 
-	@NotNull(groups = OnCreate.class)
-	@NotEmpty(groups = OnCreate.class)
 	private String description;
 
 	@NotNull(groups = OnCreate.class)
