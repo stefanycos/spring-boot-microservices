@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: 'product-service'
+  data:
+    mongodb:
+      database: product-service-db
+      port: 27017
+      host: localhost
+
+server:
+  port: 8084
+  servlet:
+    context-path: /product-service
+    
+# Registering application in Eureka Server  
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+      
+bucket: spring-demo-products

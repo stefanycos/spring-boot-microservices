@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
+import br.com.springboot.demo.s3.service.service.exception.AwsS3Exception;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -40,6 +41,7 @@ public class AwsS3Service {
 
 		} catch (final Exception e) {
 			log.error("Request to Amazon S3 failed with error {}", e.getMessage());
+			throw new AwsS3Exception(e.getMessage());
 		} finally {
 			try {
 				if (input != null) {
@@ -63,6 +65,7 @@ public class AwsS3Service {
 
 		} catch (final Exception e) {
 			log.info("Error on trying to delete object with key '{}'. Error {}", key, e.getMessage());
+			throw new AwsS3Exception(e.getMessage());
 		}
 	}
 
@@ -78,6 +81,7 @@ public class AwsS3Service {
 
 		} catch (final Exception e) {
 			log.info("Error on trying to get object with key '{}'. Error {}", key, e.getMessage());
+			throw new AwsS3Exception(e.getMessage());
 		}
 
 	}
