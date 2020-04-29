@@ -1,6 +1,6 @@
 spring:
   application:
-    name: 'product-service'
+    name: 'auth-server'
   data:
     mongodb:
       database: auth-db
@@ -8,9 +8,7 @@ spring:
       host: localhost
 
 server:
-  port: 8084
-  servlet:
-    context-path: /product-service
+  port: 8085
     
 # Registering application in Eureka Server  
 eureka:
@@ -20,4 +18,9 @@ eureka:
     service-url:
       defaultZone: http://localhost:8081/eureka
       
-bucket: spring-demo-products
+app:
+  client:
+    scope: web
+    refreshTokenValiditySeconds: 10000
+    accessTokenValiditySeconds: 10000
+    authorizedGrantTypes: password

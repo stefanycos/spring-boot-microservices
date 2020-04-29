@@ -11,6 +11,7 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 import br.com.springboot.demo.product.service.client.FileClient;
 import br.com.springboot.demo.product.service.client.request.FileRequest;
@@ -20,7 +21,9 @@ import br.com.springboot.demo.product.service.domain.ImageStatus;
 import br.com.springboot.demo.product.service.domain.Product;
 import br.com.springboot.demo.product.service.repository.ProductRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ProductService {
@@ -35,13 +38,15 @@ public class ProductService {
 
 	private final FileServiceFallback serviceFallback;
 
-	@HystrixCommand(fallbackMethod = "saveFallback")
+	@HystrixCommand(fallbackMethod = "saveFallback", commandProperties = {
+			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000") })
 	public void save(Product product) {
 		this.callFileServiceAndSetUrl(product);
 		repository.save(product);
 	}
 
-	@HystrixCommand(fallbackMethod = "deleteFallback")
+	@HystrixCommand(fallbackMethod = "deleteFallback", commandProperties = {
+			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000") })
 	public void delete(Product product) {
 		this.deleteProductImage(product);
 		repository.delete(product);
@@ -59,11 +64,13 @@ public class ProductService {
 	}
 
 	public void saveFallback(Product product) {
+		log.info("Executing Fallback for saving product");
 		serviceFallback.store(product);
 		repository.save(product);
 	}
 
 	public void deleteFallback(Product product) {
+		log.info("Executing Fallback for deleting product");
 		product.getImage().setStatus(ImageStatus.WAITING_DELETION);
 		repository.save(product);
 		product.setEnabled(false);
@@ -81,9 +88,13 @@ public class ProductService {
 				.bucket(properties.getBucket())
 				.build(); //@formatter:on
 
+		log.info("Uploading product image. Request '{}'", request);
 		FileResponse response = fileClient.upload(request);
+		
 		product.getImage().setUlr(response.getFileUrl());
 		product.getImage().setKey(response.getKey());
+		
+		log.info("Product image uploaded successfully. Response '{}'", response);
 	}
 
 	private void deleteProductImage(Product product) {
@@ -97,6 +108,7 @@ public class ProductService {
 				.bucket(properties.getBucket())
 				.build(); //@formatter:on
 
+		log.info("Deleting product image. Request '{}'", request);
 		fileClient.delete(request);
 	}
 
