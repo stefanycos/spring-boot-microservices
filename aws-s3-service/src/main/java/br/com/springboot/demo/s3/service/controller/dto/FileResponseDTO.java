@@ -8,9 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FileResponseDTO {
-	
+
 	private String fileUrl;
-	
-	private String key;
 
 }

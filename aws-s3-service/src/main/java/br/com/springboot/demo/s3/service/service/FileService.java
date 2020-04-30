@@ -23,26 +23,21 @@ public class FileService {
 	private AwsS3Service s3Service;
 
 	public FileResponseDTO upload(FileRequestDTO fileRequest) {
-		String randomKey = generateKey(fileRequest.getKey());
-		log.info("Uploading file with key '{}'", randomKey);
+		String key = fileRequest.getKey();
+		log.info("Uploading file with key '{}'", key);
 
 		InputStream input = loadInputStream(fileRequest.getBase64());
-		s3Service.makePutRequest(randomKey, fileRequest.getBucket(), input);
+		s3Service.makePutRequest(key, fileRequest.getBucket(), input);
 
-		String fileUrl = this.buildFileUrl(randomKey, fileRequest.getBucket());
+		String fileUrl = this.buildFileUrl(key, fileRequest.getBucket());
 		log.info("File uploaded successfully. Download URL '{}'", fileUrl);
 
-		return new FileResponseDTO(fileUrl, randomKey);
+		return new FileResponseDTO(fileUrl);
 	}
 
 	public void delete(FileRequestDTO fileRequest) {
 		log.info("Deleting file with key '{}' in bucket '{}'", fileRequest.getKey(), fileRequest.getBucket());
 		s3Service.makeDeleteRequest(fileRequest.getKey(), fileRequest.getBucket());
-	}
-
-	private String generateKey(String key) {
-		String random = UUID.randomUUID().toString();
-		return random + "_" + key;
 	}
 
 	private InputStream loadInputStream(String base64) {

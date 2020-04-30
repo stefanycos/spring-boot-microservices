@@ -2,6 +2,7 @@ package br.com.springboot.demo.product.service.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +42,7 @@ public class ProductService {
 	@HystrixCommand(fallbackMethod = "saveFallback", commandProperties = {
 			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000") })
 	public void save(Product product) {
-		this.callFileServiceAndSetUrl(product);
+		this.uploadProductImage(product);
 		repository.save(product);
 	}
 
@@ -76,25 +77,29 @@ public class ProductService {
 		product.setEnabled(false);
 	}
 
-	private void callFileServiceAndSetUrl(Product product) {
+	private void uploadProductImage(Product product) {
 		if (product.getImage() == null || product.getId() != null) {
 			return;
 		}
 
-		//@formatter:off
-		FileRequest request = FileRequest.builder() 
-				.base64(product.getImage().getBase64())
-				.key(product.getImage().getFilename())
-				.bucket(properties.getBucket())
-				.build(); //@formatter:on
+		this.generateAndSetKey(product);
+		FileRequest request = this.buildFileRequest(product);
 
 		log.info("Uploading product image. Request '{}'", request);
 		FileResponse response = fileClient.upload(request);
-		
+
 		product.getImage().setUlr(response.getFileUrl());
-		product.getImage().setKey(response.getKey());
-		
+
 		log.info("Product image uploaded successfully. Response '{}'", response);
+	}
+
+	private FileRequest buildFileRequest(Product product) {
+		return FileRequest
+				.builder() //@formatter:off
+				.base64(product.getImage().getBase64())
+				.key(product.getImage().getKey())
+				.bucket(properties.getBucket())
+				.build(); //@formatter:on
 	}
 
 	private void deleteProductImage(Product product) {
@@ -110,6 +115,12 @@ public class ProductService {
 
 		log.info("Deleting product image. Request '{}'", request);
 		fileClient.delete(request);
+	}
+
+	private void generateAndSetKey(Product product) {
+		String uuid = UUID.randomUUID().toString();
+		String key = uuid + "_" + product.getImage().getFilename();
+		product.getImage().setKey(key);
 	}
 
 }

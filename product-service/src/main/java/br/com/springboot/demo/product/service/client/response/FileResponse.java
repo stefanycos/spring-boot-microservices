@@ -8,6 +8,5 @@ import lombok.Setter;
 public class FileResponse {
 
 	private String fileUrl;
-	
-	private String key;
+
 }
