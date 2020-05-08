@@ -20,7 +20,7 @@ public class ProductImage {
 	@Transient
 	private String base64;
 	
-	private String ulr;
+	private String url;
 	
 	private String key;
 	

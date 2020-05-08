@@ -88,7 +88,7 @@ public class ProductService {
 		log.info("Uploading product image. Request '{}'", request);
 		FileResponse response = fileClient.upload(request);
 
-		product.getImage().setUlr(response.getFileUrl());
+		product.getImage().setUrl(response.getFileUrl());
 
 		log.info("Product image uploaded successfully. Response '{}'", response);
 	}

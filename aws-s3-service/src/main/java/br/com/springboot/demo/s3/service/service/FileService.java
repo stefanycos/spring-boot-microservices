@@ -3,7 +3,6 @@ package br.com.springboot.demo.s3.service.service;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Base64;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 

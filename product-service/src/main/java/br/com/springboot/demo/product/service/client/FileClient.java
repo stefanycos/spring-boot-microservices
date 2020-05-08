@@ -9,7 +9,7 @@ import br.com.springboot.demo.product.service.client.request.FileRequest;
 import br.com.springboot.demo.product.service.client.response.FileResponse;
 import br.com.springboot.demo.product.service.config.FeignClientConfiguration;
 
-@FeignClient(name = "s3-service", path = "/s3-service/v1/files", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "s3-service", path = "/v1/files", configuration = FeignClientConfiguration.class)
 public interface FileClient {
 
 	@PostMapping

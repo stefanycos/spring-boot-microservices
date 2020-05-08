@@ -3,14 +3,12 @@ spring:
     name: 'product-service'
   data:
     mongodb:
-      database: auth-db
+      database: product-service-db
       port: 27017
       host: localhost
 
 server:
   port: 8084
-  servlet:
-    context-path: /product-service
     
 # Registering application in Eureka Server  
 eureka:
@@ -19,5 +17,14 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8081/eureka
+
+security:
+  oauth2:
+    resource:
+      user-info-uri: http://localhost:8085/v1/auth
+      
+# enable the share of configuration between spring and hystrix threads   
+hystrix:
+ shareSecurityContext: true
       
 bucket: spring-demo-products

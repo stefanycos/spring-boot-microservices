@@ -1,3 +1,6 @@
+server:
+  port: 8888
+  
 spring:
   application:
     name: 'api-gateway'
@@ -9,10 +12,20 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8081/eureka
-      
+
+# Configuring exposure of routes find in eureka  
 management:
  endpoints:
   web:
    exposure:
     include:
-    - "routes" # lista as rotas encontradas no eureka
+    - "routes"
+ 
+# Configuring headers to be forwarded to applications  
+zuul:
+ sensitive-headers:
+ - Cookie, Authorization
+ 
+s3-service:
+  ribbon:
+    ReadTimeout: 3000

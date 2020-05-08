@@ -4,9 +4,6 @@ spring:
     
 server:
   port: 8083
-  servlet:
-    context-path: /s3-service
-      
       
 # Registering application in Eureka Server  
 eureka:
@@ -15,6 +12,11 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8081/eureka
+      
+security:
+  oauth2:
+    resource:
+      user-info-uri: http://localhost:8085/v1/auth
 
 # aws configuration
 accessKeyId: your-aws-access-key

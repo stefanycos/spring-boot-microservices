@@ -19,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.springboot.demo.product.service.controller.dto.ProductRequestDTO;
 import br.com.springboot.demo.product.service.controller.dto.Views.OnCreate;
-import br.com.springboot.demo.product.service.controller.dto.Views.OnUpdate;
 import br.com.springboot.demo.product.service.controller.mapper.ProductMapper;
 import br.com.springboot.demo.product.service.domain.Product;
 import br.com.springboot.demo.product.service.service.ProductService;
@@ -53,7 +52,7 @@ public class ProductController {
 	@PostMapping
 	public Product create(@RequestBody @Validated(OnCreate.class) ProductRequestDTO payload) {
 		Product product = mapper.toProduct(payload);
-		service.save(product);
+		service.uploadAndSave(product);
 		return product;
 	}
 
@@ -61,14 +60,14 @@ public class ProductController {
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable String id) {
 		Product product = this.read(id);
-		service.delete(product);
+		service.deleteFileAndProduct(product);
 	}
 
 	@PutMapping("/{id}")
-	public Product update(@PathVariable String id, @RequestBody @Validated(OnUpdate.class) ProductRequestDTO payload) {
+	public Product update(@PathVariable String id, @RequestBody ProductRequestDTO payload) {
 		Product product = this.read(id);
 		ObjectUtils.copyNonNullProperties(payload, product);
-		service.save(product);
+		service.uploadAndSave(product);
 
 		return product;
 	}
