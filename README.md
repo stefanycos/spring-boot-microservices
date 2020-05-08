@@ -20,3 +20,6 @@ Demo of microservices ecosystem, making use of Netflix OSS and some microservice
 
 * **Product-Service:** storage of products containing its images, that are sent to Amazon S3 through S3-Service,Implemented using [Netflix Hystrix](https://github.com/Netflix/Hystrix/wiki) for fault tolerance and MongoDB as database.
 
+#### Requests
+* Some sample requests for each service is available in Postman Collection file.
+
