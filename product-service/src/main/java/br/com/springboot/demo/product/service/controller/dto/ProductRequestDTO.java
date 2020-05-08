@@ -18,7 +18,6 @@ public class ProductRequestDTO {
 	private String description;
 
 	@NotNull(groups = OnCreate.class)
-	@NotEmpty(groups = OnCreate.class)
 	private Integer amount;
 	
 	private ProductImageDTO image;

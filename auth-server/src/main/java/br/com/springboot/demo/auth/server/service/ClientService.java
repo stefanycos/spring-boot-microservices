@@ -1,6 +1,7 @@
 package br.com.springboot.demo.auth.server.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +23,7 @@ public class ClientService {
 				.orElseThrow(() -> new UsernameNotFoundException("Client not found. Client: " + clientId));
 	}
 
-	public Client save(Client client) {
+	public Client create(Client client) {
 		if (this.exists(client)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 					"Client with id " + client.getClientId() + " is already in use.");
@@ -31,8 +32,16 @@ public class ClientService {
 		return repositiry.save(client);
 	}
 
+	public Optional<Client> findById(String id) {
+		return repositiry.findById(id);
+	}
+
 	public List<Client> findAll() {
 		return repositiry.findAll();
+	}
+
+	public void delete(Client client) {
+		repositiry.delete(client);
 	}
 
 	private boolean exists(Client client) {

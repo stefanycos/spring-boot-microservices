@@ -1,6 +1,7 @@
 package br.com.springboot.demo.auth.server.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +23,7 @@ public class UserService {
 				.orElseThrow(() -> new UsernameNotFoundException("User not found. Email: " + email));
 	}
 
-	public User save(User user) {
+	public User create(User user) {
 		if (this.exists(user)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 					"User with email " + user.getEmail() + " is already in use.");
@@ -31,8 +32,16 @@ public class UserService {
 		return repositiry.save(user);
 	}
 
+	public Optional<User> findById(String id) {
+		return repositiry.findById(id);
+	}
+
 	public List<User> findAll() {
 		return repositiry.findAll();
+	}
+
+	public void delete(User user) {
+		repositiry.delete(user);
 	}
 
 	private boolean exists(User user) {

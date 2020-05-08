@@ -29,3 +29,7 @@ zuul:
 s3-service:
   ribbon:
     ReadTimeout: 3000
+    
+product-service:
+  ribbon:
+    ReadTimeout: 3000

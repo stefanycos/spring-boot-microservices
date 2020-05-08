@@ -52,7 +52,7 @@ public class ProductController {
 	@PostMapping
 	public Product create(@RequestBody @Validated(OnCreate.class) ProductRequestDTO payload) {
 		Product product = mapper.toProduct(payload);
-		service.uploadAndSave(product);
+		service.save(product);
 		return product;
 	}
 
@@ -60,14 +60,14 @@ public class ProductController {
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable String id) {
 		Product product = this.read(id);
-		service.deleteFileAndProduct(product);
+		service.delete(product);
 	}
 
 	@PutMapping("/{id}")
 	public Product update(@PathVariable String id, @RequestBody ProductRequestDTO payload) {
 		Product product = this.read(id);
 		ObjectUtils.copyNonNullProperties(payload, product);
-		service.uploadAndSave(product);
+		service.save(product);
 
 		return product;
 	}

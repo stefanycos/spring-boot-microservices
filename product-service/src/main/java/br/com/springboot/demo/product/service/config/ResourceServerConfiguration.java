@@ -12,7 +12,12 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	public void configure(HttpSecurity http) throws Exception { //@formatter:off
 		http.authorizeRequests()
 				.antMatchers(HttpMethod.GET, "/v1/products/*").permitAll()
+				.antMatchers(HttpMethod.GET, "/**").permitAll()
+				/*.antMatchers("/hystrix", "/hystrix/**").permitAll()
+				.antMatchers("/actuator/**", "/actuator").permitAll()
+				.antMatchers("/webjars/**", "/resources/**").permitAll()*/
 			.anyRequest()
 				.authenticated(); //@formatter:on
 	}
+	
 }

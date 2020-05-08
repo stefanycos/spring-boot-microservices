@@ -23,6 +23,14 @@ security:
     resource:
       user-info-uri: http://localhost:8085/v1/auth
       
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - hystrix.stream, info, health
+      base-path: /
+      
 # enable the share of configuration between spring and hystrix threads   
 hystrix:
  shareSecurityContext: true

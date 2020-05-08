@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,6 +52,21 @@ public class RestExceptionHandler {
 
 		result.getFieldErrors()
 				.forEach(fieldError -> details.addViolation(fieldError.getField(), fieldError.getDefaultMessage()));
+
+		return details;
+	}
+
+	@ExceptionHandler(UsernameNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ErrorDTO handleUserNotFoundException(UsernameNotFoundException ex, HttpServletRequest request) {
+		// @formatter:off
+		ErrorDTO details = ErrorDTO.builder()
+			.status(HttpStatus.NOT_FOUND.value())
+			.error("Not Found")
+			.message(ex.getMessage())
+			.path(request.getRequestURI())
+			.build();
+		// @formatter:on
 
 		return details;
 	}
